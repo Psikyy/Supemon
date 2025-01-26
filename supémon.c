@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "intro/intro.h"
+#include "adventure/choice/choice.h"
 
 int main() {
     char nom[50];
@@ -9,6 +10,8 @@ int main() {
     scanf("%49s", nom);
 
     intro(nom);
+
+    choice();
 
     return 0;
 }
