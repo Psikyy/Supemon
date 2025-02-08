@@ -1,21 +1,32 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include "intro/intro.h"
 #include "class/player/player.h"
+#include "adventure/shop/shop.h"
 
 int main() {
-    Player joueur;
-    char nom[50];
+    Player player;
+    initialize_player(&player, "Ash", 1000, 1);
 
-    printf("Veuillez saisir votre nom : ");
-    scanf("%49s", nom);
+    int choix;
+    while (1) {
+        printf("\n=== MENU ===\n");
+        printf("1 - Acheter un objet\n");
+        printf("2 - Vendre un objet\n");
+        printf("3 - Quitter\n");
+        printf("Votre choix: ");
+        scanf("%d", &choix);
 
-    int starter_choice = intro(nom);
-    printf("Starter choisi : %d\n", starter_choice);
-
-    initialize_player(&joueur, nom, 500, starter_choice);
-    printf("Player initialisé, nom : %s\n", joueur.name);  // Vérifie si le nom est correctement affecté
-    printf("Fin du jeu. Merci d'avoir joué !\n");
-
-    return 0;
+        switch (choix) {
+            case 1:
+                buy_item(&player);
+                break;
+            case 2:
+                sell_item(&player, 0);
+                break;
+            case 3:
+                printf("Au revoir !\n");
+                return 0;
+            default:
+                printf("Choix invalide !\n");
+        }
+    }
 }
