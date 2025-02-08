@@ -1,7 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "Supemon.h"
+#include "../supemon/supemon.h"
+
 
 #define MAX_SUPEMONS 6
 #define MAX_ITEMS 10

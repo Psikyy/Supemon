@@ -59,6 +59,8 @@
   "files.associations": {
     "*.embeddedhtml": "html",
     "intro.h": "c",
-    "choice.h": "c"
+    "choice.h": "c",
+    "supemon.h": "c",
+    "player.h": "c"
   }
 }

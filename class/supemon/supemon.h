@@ -9,11 +9,11 @@
 #define MAX_MOVES 2
 
 typedef struct {
-    char name[MAX_NAME_LENGTH];
+    char name[50];
     int damage;
-    int stat_boost;
-    char stat_target[10];
+    int stat_boost;  // Ajout du champ stat_boost
 } Move;
+
 
 typedef struct {
     char name[MAX_NAME_LENGTH];
