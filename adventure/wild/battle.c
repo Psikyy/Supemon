@@ -10,33 +10,29 @@ void perform_attack(Supemon *attacker, Supemon *defender, int move_index) {
         return;
     }
 
-    Move move = attacker->moves[move_index];  // Récupérer le move du Supémon attaquant
+    Move move = attacker->moves[move_index];
     int damage = 0;
 
-    // Vérifier le type de move et appliquer la logique correspondante
     if (strcmp(move.name, "Scratch") == 0) {
-        // Calcul des dégâts pour "Scratch"
         damage = attacker->attack - defender->defense;
-        if (damage < 0) damage = 0;  // Les dégâts ne peuvent pas être négatifs
+        if (damage < 0) damage = 0;
         defender->hp -= damage;
         printf("%s used Scratch!\n", attacker->name);
         printf("It dealt %d damage to %s!\n", damage, defender->name);
     }
     else if (strcmp(move.name, "Growl") == 0) {
-        // "Growl" réduit la défense de l'ennemi
         printf("%s used Growl!\n", attacker->name);
         printf("%s's defense decreased!\n", defender->name);
-        defender->defense -= 1;  // Réduction de la défense de l'ennemi (ajustable)
+        defender->defense -= 1;
     }
     else {
         printf("%s used %s!\n", attacker->name, move.name);
         printf("Move not implemented or unsupported.\n");
     }
     
-    // Vérifier si la vie du défenseur tombe à 0 ou moins
     if (defender->hp <= 0) {
         printf("%s fainted!\n", defender->name);
-        defender->hp = 0;  // Eviter une valeur négative de vie
+        defender->hp = 0;
     }
 }
 
@@ -109,8 +105,43 @@ void handle_use_item(Player *player) {
     }
     
     printf("\nAvailable items:\n");
-    // Afficher les items disponibles
-    // À implémenter selon votre structure d'items
+    for (int i = 0; i < player->item_count; i++) {
+        printf("%d - %s\n", i + 1, player->items[i].name);
+    }
+    
+    int choice;
+    printf("Choose an item to use (1-%d): ", player->item_count);
+    scanf("%d", &choice);
+    
+    if (choice < 1 || choice > player->item_count) {
+        printf("Invalid choice!\n");
+        return;
+    }
+    
+    Item selected_item = player->items[choice - 1];
+    
+    if (strcmp(selected_item.name, "Potion") == 0) {
+        player->selected_supemon->hp += 5;
+        if (player->selected_supemon->hp > player->selected_supemon->max_hp)
+            player->selected_supemon->hp = player->selected_supemon->max_hp;
+        printf("%s's HP restored by 5!\n", player->selected_supemon->name);
+    } else if (strcmp(selected_item.name, "Super Potion") == 0) {
+        player->selected_supemon->hp += 10;
+        if (player->selected_supemon->hp > player->selected_supemon->max_hp)
+            player->selected_supemon->hp = player->selected_supemon->max_hp;
+        printf("%s's HP restored by 10!\n", player->selected_supemon->name);
+    } else if (strcmp(selected_item.name, "Rare Candy") == 0) {
+        player->selected_supemon->level += 1;
+        printf("%s leveled up to %d!\n", player->selected_supemon->name, player->selected_supemon->level);
+    } else {
+        printf("This item cannot be used in battle!\n");
+        return;
+    }
+    
+    for (int i = choice - 1; i < player->item_count - 1; i++) {
+        player->items[i] = player->items[i + 1];
+    }
+    player->item_count--;
 }
 
 void handle_capture(Supemon *enemy_supemon, Player *player) {
@@ -196,10 +227,7 @@ void battle(Supemon *enemy_supemon, Player *player) {
     int choix;
     bool battle_ended = false;
     
-    while (!battle_ended && 
-           enemy_supemon->hp > 0 && 
-           player->selected_supemon->hp > 0) {
-        
+    while (!battle_ended && enemy_supemon->hp > 0 && player->selected_supemon->hp > 0) {
         choix = display_battle_screen(enemy_supemon, player);
         
         switch (choix) {
@@ -214,7 +242,7 @@ void battle(Supemon *enemy_supemon, Player *player) {
                 break;
             case 4:
                 handle_capture(enemy_supemon, player);
-                battle_ended = true;  // Si la capture réussit
+                battle_ended = true;
                 break;
             case 5:
                 if (handle_run_away(enemy_supemon, player)) {
@@ -226,15 +254,12 @@ void battle(Supemon *enemy_supemon, Player *player) {
                 break;
         }
         
-        // Vérifier si le combat est terminé
         if (enemy_supemon->hp <= 0) {
             printf("%s fainted!\n", enemy_supemon->name);
             battle_ended = true;
         }
         if (player->selected_supemon->hp <= 0) {
             printf("%s fainted!\n", player->selected_supemon->name);
-            // Vérifier si le joueur a d'autres Supémons disponibles
-            // À implémenter
         }
     }
 }

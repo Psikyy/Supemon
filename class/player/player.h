@@ -2,11 +2,19 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "Supemon.h"
+#include "../supemon/supemon.h"
 
 #define MAX_SUPEMONS 6
-#define MAX_ITEMS 20
+#define MAX_ITEMS 10
 #define MAX_NAME_LENGTH 50
+
+typedef struct
+{
+    char name[20];
+    int price;
+    int effect;
+}Item ;
+
 
 typedef struct {
     char name[MAX_NAME_LENGTH];
@@ -14,7 +22,7 @@ typedef struct {
     int supemon_count;
     Supemon *selected_supemon;
     int supcoins;
-    int items[MAX_ITEMS];
+    Item items[MAX_ITEMS];
     int item_count;
 } Player;
 
