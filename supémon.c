@@ -21,7 +21,7 @@ int main() {
     
     // Initialisation du joueur
     Player player;
-    initialize_player(&player, "Ash", 100);
+    initialize_player(&player, "Ash", 100, 1);
     
     // Ajouter le Supémon du joueur
     add_supemon(&player, player_supemon);
