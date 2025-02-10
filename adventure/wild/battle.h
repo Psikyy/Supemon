@@ -21,5 +21,6 @@ void handle_move(Supemon *enemy_supemon, Player *player);
 void handle_change_supemon(Player *player);
 void handle_capture(Supemon *enemy_supemon, Player *player);
 bool handle_run_away(Supemon *enemy_supemon, Player *player);
+void calculate_exp_gain(Supemon *winner, Supemon *loser);
 
 #endif // BATTLE_H

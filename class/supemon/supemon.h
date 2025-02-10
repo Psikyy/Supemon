@@ -29,5 +29,8 @@ typedef struct {
 } Supemon;
 
 void initialize_supemon(Supemon *s, const char *name, int hp, int attack, int defense, int evasion, int accuracy, int speed, Move moves[]);
+void check_level_up(Supemon *s);
+int get_exp_for_level(int level);
+void apply_level_up(Supemon *s);
 
 #endif

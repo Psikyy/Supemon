@@ -223,6 +223,21 @@ int display_battle_screen(Supemon *enemy_supemon, Player *player) {
     return choix;
 }
 
+void calculate_exp_gain(Supemon *winner, Supemon *loser) {
+    // Formule de base pour le gain d'XP :
+    // (Niveau du perdant * 50) + bonus si le niveau du perdant est plus élevé
+    int base_exp = loser->level * 50;
+
+    // Bonus si le Supémon vaincu est d'un niveau plus élevé
+    if (loser->level > winner->level) {
+        base_exp = base_exp * 1.5; // 50% bonus
+    }
+
+    printf("%s gained %d experience points!\n", winner->name, base_exp);
+    winner->experience += base_exp;
+    check_level_up(winner);
+}
+
 void battle(Supemon *enemy_supemon, Player *player) {
     int choix;
     bool battle_ended = false;
@@ -256,6 +271,7 @@ void battle(Supemon *enemy_supemon, Player *player) {
         
         if (enemy_supemon->hp <= 0) {
             printf("%s fainted!\n", enemy_supemon->name);
+            calculate_exp_gain(player->selected_supemon, enemy_supemon);
             battle_ended = true;
         }
         if (player->selected_supemon->hp <= 0) {
