@@ -1,8 +1,32 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "../../class/supemon/supemon.h"
 #include "../../class/player/player.h"
+
+Supemon get_random_wild_supemon() {
+    Supemon wild_supemons[3];
+
+    // Supmander
+    wild_supemons[0] = (Supemon){"Supmander", 10, 0, 1, 1, 1, 2, 1, 3, 0, 0};
+    wild_supemons[0].moves[0] = (Move){"Scratch", 3, 0};  // Scratch deals 3 damage
+    wild_supemons[0].moves[1] = (Move){"Growl", 0, 1};    // Growl boosts Attack by 1
+
+    // Supasaur
+    wild_supemons[1] = (Supemon){"Supasaur", 9, 0, 1, 1, 3, 2, 2, 3, 0, 0};
+    wild_supemons[1].moves[0] = (Move){"Pound", 2, 0};     // Pound deals 2 damage
+    wild_supemons[1].moves[1] = (Move){"Foliage", 0, 1};   // Foliage boosts Evasion by 1
+
+    // Supirtle
+    wild_supemons[2] = (Supemon){"Supirtle", 11, 0, 1, 2, 2, 1, 2, 2, 0, 0};
+    wild_supemons[2].moves[0] = (Move){"Pound", 2, 0};     // Pound deals 2 damage
+    wild_supemons[2].moves[1] = (Move){"Shell", 0, 1};     // Shell boosts Defense by 1
+
+    // Pick a random Supemon
+    int random_index = rand() % 3;
+    return wild_supemons[random_index];
+}
 
 void perform_attack(Supemon *attacker, Supemon *defender, int move_index) {
     if (move_index < 0 || move_index >= MAX_MOVES) {
@@ -25,6 +49,23 @@ void perform_attack(Supemon *attacker, Supemon *defender, int move_index) {
         printf("%s's defense decreased!\n", defender->name);
         defender->defense -= 1;
     }
+    else if (strcmp(move.name, "Pound") == 0) {
+        damage = attacker->attack - defender->defense;
+        if (damage < 0) damage = 0;
+        defender->hp -= damage;
+        printf("%s used Pound!\n", attacker->name);
+        printf("It dealt %d damage to %s!\n", damage, defender->name);
+    }
+    else if (strcmp(move.name, "Foliage") == 0) {
+        printf("%s used Foliage!\n", attacker->name);
+        printf("%s's evasion increased!\n", attacker->name);
+        attacker->evasion += 1;
+    }
+    else if (strcmp(move.name, "Shell") == 0) {
+        printf("%s used Shell!\n", attacker->name);
+        printf("%s's defense increased!\n", attacker->name);
+        attacker->defense += 1;
+    }
     else {
         printf("%s used %s!\n", attacker->name, move.name);
         printf("Move not implemented or unsupported.\n");
@@ -34,6 +75,14 @@ void perform_attack(Supemon *attacker, Supemon *defender, int move_index) {
         printf("%s fainted!\n", defender->name);
         defender->hp = 0;
     }
+}
+
+void calculate_exp_gain(Supemon *winner, Supemon *loser) {
+    int exp_multiplier = (rand() % 401) + 100; // Random between 100 and 500
+    int base_exp = loser->level * exp_multiplier;
+    printf("%s gained %d experience points!\n", winner->name, base_exp);
+    winner->experience += base_exp;
+    check_level_up(winner);
 }
 
 double calculate_capture_rate(int max_hp, int current_hp) {
@@ -51,8 +100,8 @@ double calculate_escape_rate(int player_speed, int enemy_speed) {
 
 void handle_move(Supemon *enemy_supemon, Player *player) {
     printf("\nAvailable Moves:\n");
-    
-    // Affichage des mouvements disponibles pour le Supémon du joueur
+
+    // Displaying the player's Supémon moves
     for (int i = 0; i < MAX_MOVES; i++) {
         if (strlen(player->selected_supemon->moves[i].name) > 0) {
             printf("%d - %s\n", i + 1, player->selected_supemon->moves[i].name);
@@ -64,19 +113,18 @@ void handle_move(Supemon *enemy_supemon, Player *player) {
     scanf("%d", &move_choice);
 
     if (move_choice >= 1 && move_choice <= MAX_MOVES) {
-        // Appel de perform_attack avec le mouvement choisi
+        // Correctly map the move choice to the correct move index (0-based)
         perform_attack(player->selected_supemon, enemy_supemon, move_choice - 1);
-
-        // Contre-attaque de l'ennemi s'il est encore en vie
+        
+        // If the enemy is still alive, counter-attack
         if (enemy_supemon->hp > 0) {
-            int enemy_move = rand() % MAX_MOVES;  // Choisir aléatoirement un mouvement de l'ennemi
+            int enemy_move = rand() % MAX_MOVES; // Random move for enemy
             perform_attack(enemy_supemon, player->selected_supemon, enemy_move);
         }
     } else {
-        printf("Invalid choice!\n");
+        printf("Invalid move choice!\n");
     }
 }
-
 
 void handle_change_supemon(Player *player) {
     printf("\nAvailable Supémons:\n");
@@ -142,6 +190,13 @@ void handle_use_item(Player *player) {
         player->items[i] = player->items[i + 1];
     }
     player->item_count--;
+}
+
+void handle_victory(Player *player, Supemon *enemy_supemon) {
+    int supcoins_reward = (rand() % 401) + 100; // Random between 100 and 500
+    player->supcoins += supcoins_reward;
+    printf("You won the battle! You earned %d Supcoins!\n", supcoins_reward);
+    calculate_exp_gain(player->selected_supemon, enemy_supemon);
 }
 
 void handle_capture(Supemon *enemy_supemon, Player *player) {
@@ -223,22 +278,15 @@ int display_battle_screen(Supemon *enemy_supemon, Player *player) {
     return choix;
 }
 
-void calculate_exp_gain(Supemon *winner, Supemon *loser) {
-    // Formule de base pour le gain d'XP :
-    // (Niveau du perdant * 50) + bonus si le niveau du perdant est plus élevé
-    int base_exp = loser->level * 50;
-
-    // Bonus si le Supémon vaincu est d'un niveau plus élevé
-    if (loser->level > winner->level) {
-        base_exp = base_exp * 1.5; // 50% bonus
+void battle(Supemon *enemy_supemon, Player *player) {
+    if (enemy_supemon == NULL || player == NULL) {
+        printf("Error: Invalid enemy or player.\n");
+        return;
     }
 
-    printf("%s gained %d experience points!\n", winner->name, base_exp);
-    winner->experience += base_exp;
-    check_level_up(winner);
-}
-
-void battle(Supemon *enemy_supemon, Player *player) {
+    printf("A wild %s appears!\n", enemy_supemon->name);
+    printf("Go %s!\n", player->selected_supemon->name);
+    
     int choix;
     bool battle_ended = false;
     
@@ -265,17 +313,19 @@ void battle(Supemon *enemy_supemon, Player *player) {
                 }
                 break;
             default:
-                printf("Invalid choice!\n");
+                printf("Invalid choice! Please enter a number between 1 and 5.\n");
                 break;
         }
         
         if (enemy_supemon->hp <= 0) {
             printf("%s fainted!\n", enemy_supemon->name);
-            calculate_exp_gain(player->selected_supemon, enemy_supemon);
+            handle_victory(player, enemy_supemon);
             battle_ended = true;
         }
         if (player->selected_supemon->hp <= 0) {
             printf("%s fainted!\n", player->selected_supemon->name);
+            printf("You lost the battle... No reward this time.\n");
+            battle_ended = true;
         }
     }
 }

@@ -22,7 +22,7 @@ typedef struct {
     int supemon_count;
     Supemon *selected_supemon;
     int supcoins;
-    Item items[MAX_ITEMS];
+    Item *items;  // Pointeur pour allouer dynamiquement
     int item_count;
 } Player;
 
@@ -30,5 +30,7 @@ typedef struct {
 void initialize_player(Player *p, const char *name, int supcoins, int starter_choice);
 
 void add_supemon(Player *p, Supemon s);
+
+void free_player(Player *p);
 
 #endif // PLAYER_H

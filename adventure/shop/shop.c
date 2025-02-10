@@ -53,22 +53,33 @@ void buy_item(Player *player) {
 
     // Vérification du budget
     int total_price = selected_item.price * quantity;
+    
+    // Vérifier si le joueur a assez de Supcoins
     if (player->supcoins < total_price) {
-        printf("Vous n'avez pas assez de Supcoins !\n");
+        printf("Vous n'avez pas assez de Supcoins pour cet achat.\n");
         return;
     }
-
-    // Ajout de l’objet dans l’inventaire
-    if (player->item_count + quantity <= MAX_ITEMS) {
-        for (int i = 0; i < quantity; i++) {
-            strcpy(player->items[player->item_count].name, selected_item.name);
-            player->items[player->item_count].effect = selected_item.effect;
-            player->item_count++;
-        }
-        player->supcoins -= total_price;
-        printf("Vous avez acheté %d x %s !\n", quantity, selected_item.name);
-    } else {
-        printf("Inventaire plein !\n");
+    
+    // Vérifier si l'inventaire n'est pas plein
+    if (player->item_count + quantity > MAX_ITEMS) {
+        printf("Votre inventaire est plein, vous ne pouvez pas acheter plus d'objets.\n");
+        return;
+    }
+    
+    // Ajouter l'objet à l'inventaire
+    for (int i = 0; i < quantity; i++) {
+        strcpy(player->items[player->item_count].name, selected_item.name);
+        player->items[player->item_count].effect = selected_item.effect;
+        player->item_count++;
+    }
+    
+    player->supcoins -= total_price; // Déduire le prix des Supcoins
+    printf("Vous avez acheté %d x %s !\n", quantity, selected_item.name);
+    
+    // Afficher l'inventaire actuel
+    printf("\nInventaire actuel :\n");
+    for (int i = 0; i < player->item_count; i++) {
+        printf("- %s (Effet: %d)\n", player->items[i].name, player->items[i].effect);
     }
 }
 
@@ -112,36 +123,51 @@ void sell_item(Player *player, int item_index) {
 
 void use_item(Player *player, int item_index) {
     if (item_index < 0 || item_index >= player->item_count) {
-        printf("Indice invalide !\n");
+        printf("Objet invalide.\n");
         return;
     }
 
-    if (player->selected_supemon == NULL) {
-        printf("Aucun Supémon sélectionné !\n");
-        return;
-    }
+    Item *item = &player->items[item_index];
 
-    Item item = player->items[item_index];
-
-    if (strcmp(item.name, "Potion") == 0 || strcmp(item.name, "Super Potion") == 0) {
-        if (player->selected_supemon->hp < player->selected_supemon->max_hp) {
-            player->selected_supemon->hp += item.effect;
-            if (player->selected_supemon->hp > player->selected_supemon->max_hp) {
-                player->selected_supemon->hp = player->selected_supemon->max_hp;
-            }
-            printf("%s a utilisé %s ! PV restaurés à %d.\n", player->selected_supemon->name, item.name, player->selected_supemon->hp);
-        } else {
-            printf("Les PV sont déjà au maximum !\n");
+    // Gestion des Potions pour augmenter les HP
+    if (strcmp(item->name, "Potion") == 0) {
+        if (player->selected_supemon->hp == player->selected_supemon->max_hp) {
+            printf("Les HP de %s sont déjà au maximum !\n", player->selected_supemon->name);
             return;
         }
-    } else if (strcmp(item.name, "Rare Candy") == 0) {
-        player->selected_supemon->level++;
-        printf("%s a gagné un niveau ! Il est maintenant niveau %d !\n", player->selected_supemon->name, player->selected_supemon->level);
+
+        // Augmente les HP du Supémon sans dépasser les HP max
+        player->selected_supemon->hp += item->effect;
+        if (player->selected_supemon->hp > player->selected_supemon->max_hp) {
+            player->selected_supemon->hp = player->selected_supemon->max_hp;
+        }
+
+        printf("%s a utilisé %s ! Les HP de %s sont maintenant à %d.\n",
+               player->name, item->name, player->selected_supemon->name, player->selected_supemon->hp);
+        
+        // Retirer l'objet de l'inventaire
+        for (int i = item_index; i < player->item_count - 1; i++) {
+            player->items[i] = player->items[i + 1];
+        }
+        player->item_count--;
     }
 
-    // Supprimer l'objet après usage
-    for (int i = item_index; i < player->item_count - 1; i++) {
-        player->items[i] = player->items[i + 1];
+    // Gestion des Rare Candies pour augmenter le niveau sans toucher aux stats
+    else if (strcmp(item->name, "Rare Candy") == 0) {
+        // Augmenter le niveau du Supémon
+        player->selected_supemon->level++;
+        printf("%s a utilisé %s ! Le niveau de %s est maintenant %d.\n",
+               player->name, item->name, player->selected_supemon->name, player->selected_supemon->level);
+
+        // Retirer l'objet de l'inventaire
+        for (int i = item_index; i < player->item_count - 1; i++) {
+            player->items[i] = player->items[i + 1];
+        }
+        player->item_count--;
     }
-    player->item_count--;
+
+    // Si ce n'est ni une Potion, ni un Rare Candy
+    else {
+        printf("Cet objet n'a pas d'effet connu.\n");
+    }
 }

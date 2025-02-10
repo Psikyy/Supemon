@@ -4,6 +4,17 @@
 #include "../supemon/supemon.h"
 
 void initialize_player(Player *p, const char *name, int supcoins, int starter_choice) {
+    if (p->items != NULL) {
+        return;  // Si les items sont déjà initialisés, ne réalloue pas
+    }
+
+    // Allocation dynamique pour items
+    p->items = malloc(MAX_ITEMS * sizeof(Item));
+    if (!p->items) {
+        printf("Erreur d'allocation mémoire pour l'inventaire !\n");
+        exit(1);
+    }
+
     strcpy(p->name, name);
     p->supemon_count = 0;
     p->selected_supemon = NULL;
@@ -30,7 +41,20 @@ void initialize_player(Player *p, const char *name, int supcoins, int starter_ch
             return;
     }
     p->supemons[0] = starter; // Affecte le Supémon au joueur
+
+    // Initialisation de l'inventaire (données dans p->items)
+    for (int i = 0; i < MAX_ITEMS; i++) {
+        p->items[i].name[0] = '\0';  // Assure que les noms sont vides
+        p->items[i].effect = 0;      // Initialise l'effet à 0
+    }
 }
+
+
+// N'oublie pas de libérer la mémoire allouée pour p->items quand tu as fini avec le joueur
+void free_player(Player *p) {
+    free(p->items);
+}
+
 
 void add_supemon(Player *p, Supemon s) {
     if (p->supemon_count < MAX_SUPEMONS) {

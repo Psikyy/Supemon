@@ -32,5 +32,6 @@ void initialize_supemon(Supemon *s, const char *name, int hp, int attack, int de
 void check_level_up(Supemon *s);
 int get_exp_for_level(int level);
 void apply_level_up(Supemon *s);
+int random_round(float value);
 
 #endif
