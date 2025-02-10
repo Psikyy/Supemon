@@ -5,6 +5,7 @@
 #include "../../class/supemon/supemon.h"
 #include "../../class/player/player.h"  // Assure-toi que cette ligne est bien là
 #include "../../adventure/wild/battle.h"
+#include "../../adventure/center/center.h"
 
 void print_inventory(Player *player) {
     printf("Inventaire actuel (%d objets):\n", player->item_count);
@@ -46,7 +47,7 @@ void choice(Player *player) {  // Correction : passage du joueur en paramètre
                 buy_item(player);
                 break;
             case 3:
-                printf("Bienvenue dans le Supémon Center.\n");
+                run_supemon_center(player);
                 break;
             case 4:
                 printf("You left the game. Goodbye!\n");
