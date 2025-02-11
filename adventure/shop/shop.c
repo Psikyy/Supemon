@@ -150,8 +150,8 @@ void use_item(Player *player, int item_index) {
             player->items[i] = player->items[i + 1];
         }
         player->item_count--;
-    }
-        else if (strcmp(item->name, "Rare Candy") == 0) {
+    } else if (strcmp(item->name, "Rare Candy") == 0) {
+        printf("%s", item->name);
         printf("%s a utilisé un Rare Candy !\n", player->selected_supemon->name);
         
         // Au lieu de manipuler l'expérience, on appelle directement apply_level_up

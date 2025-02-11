@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "../../class/supemon/supemon.h"
 #include "../../class/player/player.h"
+#include "../../adventure/shop/shop.h"
 
 Supemon get_random_wild_supemon() {
     Supemon wild_supemons[3];
@@ -142,52 +143,6 @@ void handle_change_supemon(Player *player) {
     }
 }
 
-void handle_use_item(Player *player) {
-    if (player->item_count == 0) {
-        printf("No items in inventory!\n");
-        return;
-    }
-    
-    printf("\nAvailable items:\n");
-    for (int i = 0; i < player->item_count; i++) {
-        printf("%d - %s\n", i + 1, player->items[i].name);
-    }
-    
-    int choice;
-    printf("Choose an item to use (1-%d): ", player->item_count);
-    scanf("%d", &choice);
-    
-    if (choice < 1 || choice > player->item_count) {
-        printf("Invalid choice!\n");
-        return;
-    }
-    
-    Item selected_item = player->items[choice - 1];
-    
-    if (strcmp(selected_item.name, "Potion") == 0) {
-        player->selected_supemon->hp += 5;
-        if (player->selected_supemon->hp > player->selected_supemon->max_hp)
-            player->selected_supemon->hp = player->selected_supemon->max_hp;
-        printf("%s's HP restored by 5!\n", player->selected_supemon->name);
-    } else if (strcmp(selected_item.name, "Super Potion") == 0) {
-        player->selected_supemon->hp += 10;
-        if (player->selected_supemon->hp > player->selected_supemon->max_hp)
-            player->selected_supemon->hp = player->selected_supemon->max_hp;
-        printf("%s's HP restored by 10!\n", player->selected_supemon->name);
-    } else if (strcmp(selected_item.name, "Rare Candy") == 0) {
-        player->selected_supemon->level += 1;
-        printf("%s leveled up to %d!\n", player->selected_supemon->name, player->selected_supemon->level);
-    } else {
-        printf("This item cannot be used in battle!\n");
-        return;
-    }
-    
-    for (int i = choice - 1; i < player->item_count - 1; i++) {
-        player->items[i] = player->items[i + 1];
-    }
-    player->item_count--;
-}
-
 void handle_victory(Player *player, Supemon *enemy_supemon) {
     int supcoins_reward = (rand() % 401) + 100; // Random between 100 and 500
     player->supcoins += supcoins_reward;
@@ -297,7 +252,19 @@ void battle(Supemon *enemy_supemon, Player *player) {
                 handle_change_supemon(player);
                 break;
             case 3:
-                handle_use_item(player);
+                // The item index is the choice from the menu (adjusted to 0-based index)
+                if (player->item_count > 0) {
+                    int item_choice;
+                    printf("Choose an item to use (1-%d): ", player->item_count);
+                    scanf("%d", &item_choice);
+                    if (item_choice >= 1 && item_choice <= player->item_count) {
+                        use_item(player, item_choice - 1); // Call the use_item function with the correct index
+                    } else {
+                        printf("Invalid item choice!\n");
+                    }
+                } else {
+                    printf("No items in inventory!\n");
+                }
                 break;
             case 4:
                 handle_capture(enemy_supemon, player);

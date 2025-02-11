@@ -9,9 +9,6 @@
 // Fonction pour effectuer une attaque
 void perform_attack(Supemon *attacker, Supemon *defender, int move_index);
 
-// Fonction pour gérer l'utilisation d'un objet par le joueur
-void handle_use_item(Player *player);
-
 // Fonction principale pour gérer le combat
 void battle(Supemon *enemy_supemon, Player *player);
 // Dans battle.h

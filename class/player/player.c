@@ -24,7 +24,7 @@ void initialize_player(Player *p, const char *name, int supcoins, int starter_ch
 
     switch (starter_choice) {
         case 1:
-            initialize_supemon(&starter, "Supmander", 10, 1, 1, 1, 2, 1, (Move[]) {
+            initialize_supemon(&starter, "Supmander", 10, 10, 1, 1, 2, 1, (Move[]) {
                 {"Scratch", 3, 0},
                 {"Growl", 0, 1}
             });
