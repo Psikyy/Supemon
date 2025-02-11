@@ -151,13 +151,11 @@ void use_item(Player *player, int item_index) {
         }
         player->item_count--;
     }
-
-    // Gestion des Rare Candies pour augmenter le niveau sans toucher aux stats
-    else if (strcmp(item->name, "Rare Candy") == 0) {
-        // Augmenter le niveau du Supémon
-        player->selected_supemon->level++;
-        printf("%s a utilisé %s ! Le niveau de %s est maintenant %d.\n",
-               player->name, item->name, player->selected_supemon->name, player->selected_supemon->level);
+        else if (strcmp(item->name, "Rare Candy") == 0) {
+        printf("%s a utilisé un Rare Candy !\n", player->selected_supemon->name);
+        
+        // Au lieu de manipuler l'expérience, on appelle directement apply_level_up
+        apply_level_up(player->selected_supemon);
 
         // Retirer l'objet de l'inventaire
         for (int i = item_index; i < player->item_count - 1; i++) {

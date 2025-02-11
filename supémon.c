@@ -21,7 +21,7 @@ int main() {
 
     // Création et initialisation du joueur avec le starter choisi
     Player player;
-    initialize_player(&player, nom, 1000, starter_choice);
+    initialize_player(&player, nom, 100000, starter_choice);
 
     // S'assurer que le Supémon est bien sélectionné
     player.selected_supemon = &player.supemons[0];

@@ -12,7 +12,7 @@ int intro(char *nom) {
     printf("|Choose your starter Sup%cmon: |\n", é);
     printf("|\t1 - Supmander         |\n");
     printf("|\t2 - Supasaur          |\n");
-    printf("|\t3 - Supmander         |\n");
+    printf("|\t3 - Supirtle         |\n");
     printf("+-----------------------------+\n");
 
     printf("1, 2 or 3: ");
@@ -34,7 +34,7 @@ int intro(char *nom) {
             printf("Vous avez choisi le starter num%cro 2, vous poss%cdez donc Supasaur !\n", é, é);
             break;
         case 3:
-            printf("Vous avez choisi le starter num%cro 3, vous poss%cdez donc Supmander !\n", é, é);
+            printf("Vous avez choisi le starter num%cro 3, vous poss%cdez donc Supirtle !\n", é, é);
             break;
     }
     return starter;

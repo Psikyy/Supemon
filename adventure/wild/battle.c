@@ -9,22 +9,25 @@ Supemon get_random_wild_supemon() {
     Supemon wild_supemons[3];
 
     // Supmander
-    wild_supemons[0] = (Supemon){"Supmander", 10, 0, 1, 1, 1, 2, 1, 3, 0, 0};
-    wild_supemons[0].moves[0] = (Move){"Scratch", 3, 0};  // Scratch deals 3 damage
-    wild_supemons[0].moves[1] = (Move){"Growl", 0, 1};    // Growl boosts Attack by 1
+    initialize_supemon(&wild_supemons[0], "Supmander", 10, 1, 1, 1, 2, 1, (Move[]) {
+        {"Scratch", 3, 0},
+        {"Growl", 0, 1}
+    });
 
     // Supasaur
-    wild_supemons[1] = (Supemon){"Supasaur", 9, 0, 1, 1, 3, 2, 2, 3, 0, 0};
-    wild_supemons[1].moves[0] = (Move){"Pound", 2, 0};     // Pound deals 2 damage
-    wild_supemons[1].moves[1] = (Move){"Foliage", 0, 1};   // Foliage boosts Evasion by 1
+    initialize_supemon(&wild_supemons[1], "Supasaur", 9, 1, 1, 3, 2, 2, (Move[]) {
+        {"Vine Whip", 3, 0},
+        {"Leer", 0, 1}
+    });
 
     // Supirtle
-    wild_supemons[2] = (Supemon){"Supirtle", 11, 0, 1, 2, 2, 1, 2, 2, 0, 0};
-    wild_supemons[2].moves[0] = (Move){"Pound", 2, 0};     // Pound deals 2 damage
-    wild_supemons[2].moves[1] = (Move){"Shell", 0, 1};     // Shell boosts Defense by 1
+    initialize_supemon(&wild_supemons[2], "Supirtle", 11, 1, 2, 2, 1, 2, (Move[]) {
+        {"Water Gun", 3, 0},
+        {"Tail Whip", 0, 1}
+    });
 
-    // Pick a random Supemon
     int random_index = rand() % 3;
+    printf("Created wild Supemon: %s with HP: %d\n", wild_supemons[random_index].name, wild_supemons[random_index].hp);
     return wild_supemons[random_index];
 }
 
@@ -37,38 +40,31 @@ void perform_attack(Supemon *attacker, Supemon *defender, int move_index) {
     Move move = attacker->moves[move_index];
     int damage = 0;
 
-    if (strcmp(move.name, "Scratch") == 0) {
-        damage = attacker->attack - defender->defense;
-        if (damage < 0) damage = 0;
+    // Attaques offensives
+    if (move.damage > 0) {
+        damage = move.damage + attacker->attack - defender->defense;
+        if (damage < 1) damage = 1;  // Minimum 1 dégât
         defender->hp -= damage;
-        printf("%s used Scratch!\n", attacker->name);
-        printf("It dealt %d damage to %s!\n", damage, defender->name);
-    }
-    else if (strcmp(move.name, "Growl") == 0) {
-        printf("%s used Growl!\n", attacker->name);
-        printf("%s's defense decreased!\n", defender->name);
-        defender->defense -= 1;
-    }
-    else if (strcmp(move.name, "Pound") == 0) {
-        damage = attacker->attack - defender->defense;
-        if (damage < 0) damage = 0;
-        defender->hp -= damage;
-        printf("%s used Pound!\n", attacker->name);
-        printf("It dealt %d damage to %s!\n", damage, defender->name);
-    }
-    else if (strcmp(move.name, "Foliage") == 0) {
-        printf("%s used Foliage!\n", attacker->name);
-        printf("%s's evasion increased!\n", attacker->name);
-        attacker->evasion += 1;
-    }
-    else if (strcmp(move.name, "Shell") == 0) {
-        printf("%s used Shell!\n", attacker->name);
-        printf("%s's defense increased!\n", attacker->name);
-        attacker->defense += 1;
-    }
-    else {
         printf("%s used %s!\n", attacker->name, move.name);
-        printf("Move not implemented or unsupported.\n");
+        printf("It dealt %d damage to %s!\n", damage, defender->name);
+    }
+    // Attaques de statut
+    else if (move.stat_boost > 0) {
+        // Pour Growl, Tail Whip et Leer
+    if (strcmp(move.name, "Growl") == 0 || strcmp(move.name, "Tail Whip") == 0 || strcmp(move.name, "Leer") == 0) {
+        printf("%s used %s!\n", attacker->name, move.name);
+        if (defender->defense > 0) {
+            defender->defense -= 1;
+            printf("%s's defense decreased to %d!\n", defender->name, defender->defense);
+        } else {
+            printf("%s's defense can't go any lower!\n", defender->name);
+        }
+    }
+        else if (strcmp(move.name, "Foliage") == 0) {
+            printf("%s used %s!\n", attacker->name, move.name);
+            printf("%s's evasion increased!\n", attacker->name);
+            attacker->evasion += 1;
+        }
     }
     
     if (defender->hp <= 0) {

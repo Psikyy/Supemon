@@ -5,10 +5,9 @@
 
 void initialize_player(Player *p, const char *name, int supcoins, int starter_choice) {
     if (p->items != NULL) {
-        return;  // Si les items sont déjà initialisés, ne réalloue pas
+        return;
     }
 
-    // Allocation dynamique pour items
     p->items = malloc(MAX_ITEMS * sizeof(Item));
     if (!p->items) {
         printf("Erreur d'allocation mémoire pour l'inventaire !\n");
@@ -21,31 +20,39 @@ void initialize_player(Player *p, const char *name, int supcoins, int starter_ch
     p->supcoins = supcoins;
     p->item_count = 0;
 
-    // Initialisation des moves vides
-    Move empty_moves[MAX_MOVES] = {
-        { "", 0, 0 },  // Nom, damage, stat_boost
-        { "", 0, 0 }
-    };
-
-    // Choisir le Supémon de départ
     Supemon starter;
+
     switch (starter_choice) {
         case 1:
-            initialize_supemon(&starter, "Supmander", 10, 1, 1, 1, 2, 1, empty_moves); break;
+            initialize_supemon(&starter, "Supmander", 10, 1, 1, 1, 2, 1, (Move[]) {
+                {"Scratch", 3, 0},
+                {"Growl", 0, 1}
+            });
+            break;
         case 2:
-            initialize_supemon(&starter, "Supasaur", 9, 1, 1, 3, 2, 2, empty_moves); break;
+            initialize_supemon(&starter, "Supasaur", 9, 1, 1, 3, 2, 2, (Move[]) {
+                {"Vine Whip", 3, 0},
+                {"Leer", 0, 1}
+            });
+            break;
         case 3:
-            initialize_supemon(&starter, "Supirtle", 11, 1, 2, 2, 1, 2, empty_moves); break;
+            initialize_supemon(&starter, "Supirtle", 11, 1, 2, 2, 1, 2, (Move[]) {
+                {"Water Gun", 3, 0},
+                {"Tail Whip", 0, 1}
+            });
+            break;
         default:
             printf("Choix invalide pour le Supémon de départ.\n");
             return;
     }
-    p->supemons[0] = starter; // Affecte le Supémon au joueur
 
-    // Initialisation de l'inventaire (données dans p->items)
+    p->supemons[p->supemon_count++] = starter; // Ajoute correctement le starter
+    p->selected_supemon = &p->supemons[0];  // Assurez-vous que le premier Supémon sélectionné est correct
+
+    // Initialisation de l'inventaire
     for (int i = 0; i < MAX_ITEMS; i++) {
-        p->items[i].name[0] = '\0';  // Assure que les noms sont vides
-        p->items[i].effect = 0;      // Initialise l'effet à 0
+        p->items[i].name[0] = '\0';
+        p->items[i].effect = 0;
     }
 }
 

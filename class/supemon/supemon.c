@@ -24,7 +24,7 @@
 
 //         // Sauvegarde des mouvements
 //         for (int j = 0; j < MAX_MOVES; j++) {
-//             fprintf(file, "%s %d %d\n", s->moves[j].name, s->moves[j].power, s->moves[j].stat_boost);
+//             fprintf(file, "%s %d %d\n", s->moves[j].name, s->moves[j].damage, s->moves[j].stat_boost);
 //         }
 //     }
 
@@ -54,7 +54,7 @@
 
 //         // Chargement des mouvements
 //         for (int j = 0; j < MAX_MOVES; j++) {
-//             fscanf(file, "%s %d %d", s->moves[j].name, &s->moves[j].power, &s->moves[j].stat_boost);
+//             fscanf(file, "%s %d %d", s->moves[j].name, &s->moves[j].damage, &s->moves[j].stat_boost);
 //         }
 //     }
 
@@ -93,49 +93,62 @@ int random_round(float value) {
 }
 
 void apply_level_up(Supemon *s) {
-    // Augmente toutes les stats de 30% avec arrondissement aléatoire
+    int old_level = s->level;
+    s->level++;
     float increase_factor = 1.30;
     
+    // Sauvegarder les anciennes stats pour montrer l'évolution
+    int old_hp = s->max_hp;
+    int old_attack = s->attack;
+    int old_defense = s->defense;
+    int old_accuracy = s->accuracy;
+    int old_evasion = s->evasion;
+    int old_speed = s->speed;
+    
+    // Calcul des nouvelles stats
     s->max_hp = random_round(s->max_hp * increase_factor);
-    s->hp = s->max_hp;  // Restaure les HP au maximum
-    
-    s->base_attack = random_round(s->base_attack * increase_factor);
-    s->attack = s->base_attack;  // Reset des stats actuelles aux nouvelles stats de base
-    
-    s->base_defense = random_round(s->base_defense * increase_factor);
-    s->defense = s->base_defense;
-    
-    s->base_accuracy = random_round(s->base_accuracy * increase_factor);
-    s->accuracy = s->base_accuracy;
-    
-    s->base_evasion = random_round(s->base_evasion * increase_factor);
-    s->evasion = s->base_evasion;
-    
+    s->hp = s->max_hp;
+    s->attack = random_round(s->attack * increase_factor);
+    s->base_attack = s->attack;
+    s->defense = random_round(s->defense * increase_factor);
+    s->base_defense = s->defense;
+    s->accuracy = random_round(s->accuracy * increase_factor);
+    s->base_accuracy = s->accuracy;
+    s->evasion = random_round(s->evasion * increase_factor);
+    s->base_evasion = s->evasion;
     s->speed = random_round(s->speed * increase_factor);
     
-    s->level++;
-    
-    printf("%s reached level %d!\n", s->name, s->level);
-    printf("New stats:\n");
-    printf("HP: %d\n", s->max_hp);
-    printf("Attack: %d\n", s->attack);
-    printf("Defense: %d\n", s->defense);
-    printf("Accuracy: %d\n", s->accuracy);
-    printf("Evasion: %d\n", s->evasion);
-    printf("Speed: %d\n", s->speed);
+    printf("\n╔═══════════════════════════════════════╗\n");
+    printf("║         ÉVOLUTION DES STATS           ║\n");
+    printf("╠═══════════════════════════════════════╣\n");
+    printf("║ %s est passé au niveau %d!\n", s->name, s->level);
+    printf("║\n");
+    printf("║ HP:       %d → %d (+%d)\n", old_hp, s->max_hp, s->max_hp - old_hp);
+    printf("║ Attaque:  %d → %d (+%d)\n", old_attack, s->attack, s->attack - old_attack);
+    printf("║ Défense:  %d → %d (+%d)\n", old_defense, s->defense, s->defense - old_defense);
+    printf("║ Précision:%d → %d (+%d)\n", old_accuracy, s->accuracy, s->accuracy - old_accuracy);
+    printf("║ Esquive:  %d → %d (+%d)\n", old_evasion, s->evasion, s->evasion - old_evasion);
+    printf("║ Vitesse:  %d → %d (+%d)\n", old_speed, s->speed, s->speed - old_speed);
+    printf("╚═══════════════════════════════════════╝\n");
 }
 
 void check_level_up(Supemon *s) {
     while (1) {
-        // Calcule l'expérience nécessaire pour le prochain niveau
         int exp_needed = get_exp_for_level(s->level + 1);
         
-        // Si le Supémon n'a pas assez d'expérience pour le prochain niveau, sort de la boucle
+        printf("\n╔════════════════════════════════════╗\n");
+        printf("║           STATUT NIVEAU            ║\n");
+        printf("╠════════════════════════════════════╣\n");
+        printf("║ %s - Niveau %d\n", s->name, s->level);
+        printf("║ XP: %d / %d\n", s->experience, exp_needed);
+        printf("║ XP restante: %d\n", exp_needed - s->experience);
+        printf("╚════════════════════════════════════╝\n");
+        
         if (s->experience < exp_needed) {
             break;
         }
         
-        // Applique le level up
+        printf("\n⭐ NIVEAU SUPÉRIEUR! ⭐\n");
         apply_level_up(s);
     }
 }
