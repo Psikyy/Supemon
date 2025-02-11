@@ -58,6 +58,9 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
     "*.embeddedhtml": "html",
-    "intro.h": "c"
+    "intro.h": "c",
+    "choice.h": "c",
+    "supemon.h": "c",
+    "player.h": "c"
   }
 }
