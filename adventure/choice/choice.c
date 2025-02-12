@@ -8,7 +8,21 @@
 #include "../../adventure/center/center.h"
 
 void print_inventory(Player *player) {
-    printf("Inventaire actuel (%d objets):\n", player->item_count);
+    if (!player || !player->items) {
+    printf("Erreur : joueur ou inventaire non initialisé !\n");
+    return;
+    }
+
+    if (player->item_count < 0 || player->item_count > MAX_ITEMS) {
+    printf("Erreur : nombre d'items invalide (%d)\n", player->item_count);
+    return;
+    }
+
+    if (!player->items) {
+    printf("Erreur : l'inventaire du joueur n'est pas alloué !\n");
+    return;
+    }
+
     if (player->item_count == 0) {
         printf("L'inventaire est vide.\n");
     } else {

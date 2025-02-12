@@ -4,21 +4,34 @@
 #include "../supemon/supemon.h"
 
 void initialize_player(Player *p, const char *name, int supcoins, int starter_choice) {
+    memset(p, 0, sizeof(Player));  // Initialise toute la structure à 0
+    p->item_count = 0;  // Initialise l'inventaire à 0 items
+
+    if (!p) {
+    printf("Erreur : joueur non initialisé !\n");
+    return;
+    }
+
     if (p->items != NULL) {
         return;
     }
 
+
     p->items = malloc(MAX_ITEMS * sizeof(Item));
+
     if (!p->items) {
         printf("Erreur d'allocation mémoire pour l'inventaire !\n");
         exit(1);
+    }
+    for (int i = 0; i < MAX_ITEMS; i++) {
+    p->items[i].name[0] = '\0';  // Vide la chaîne pour éviter les accès mémoire invalides
+    p->items[i].effect = 0;      // Initialise `effect`
     }
 
     strcpy(p->name, name);
     p->supemon_count = 0;
     p->selected_supemon = NULL;
     p->supcoins = supcoins;
-    p->item_count = 0;
 
     Supemon starter;
 
@@ -46,22 +59,23 @@ void initialize_player(Player *p, const char *name, int supcoins, int starter_ch
             return;
     }
 
+    if (p->supemon_count >= MAX_SUPEMONS) {
+    printf("Erreur : impossible d'ajouter un Supémon !\n");
+    return;
+    }
+
     p->supemons[p->supemon_count++] = starter; // Ajoute correctement le starter
     p->selected_supemon = &p->supemons[0];  // Assurez-vous que le premier Supémon sélectionné est correct
-
-    // Initialisation de l'inventaire
-    for (int i = 0; i < MAX_ITEMS; i++) {
-        p->items[i].name[0] = '\0';
-        p->items[i].effect = 0;
-    }
 }
 
 
 // N'oublie pas de libérer la mémoire allouée pour p->items quand tu as fini avec le joueur
 void free_player(Player *p) {
-    free(p->items);
+    if (p->items) {
+        free(p->items);
+        p->items = NULL;
+    }
 }
-
 
 void add_supemon(Player *p, Supemon s) {
     if (p->supemon_count < MAX_SUPEMONS) {
