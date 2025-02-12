@@ -326,6 +326,10 @@ bool handle_run_away(Supemon *enemy_supemon, Player *player) {
         return true;
     } else {
         printf("Couldn't escape!\n");
+
+        int enemy_move = rand() % MAX_MOVES;
+        perform_attack(enemy_supemon, player->selected_supemon, enemy_move);
+
         return false;
     }
     return false;
@@ -382,7 +386,6 @@ int display_battle_screen(Supemon *enemy_supemon, Player *player) {
     }
 
     return choix;
-    system("clear");
 }
 
 void battle(Supemon *enemy_supemon, Player *player) {
@@ -403,9 +406,11 @@ void battle(Supemon *enemy_supemon, Player *player) {
         switch (choix) {
             case 1:
                 handle_move(enemy_supemon, player);
+                //system("clear");
                 break;
             case 2:
                 handle_change_supemon(player);
+                system("clear");
                 break;
              case 3:
                 if (player->item_count > 0) {
