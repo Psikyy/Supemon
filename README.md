@@ -1,15 +1,10 @@
-Bien sûr ! Voici le contenu amélioré de ton **README.md** en Markdown :  
-
----
-
-```markdown
 # Supémon - CLI Game
 
 Supémon est un jeu en ligne de commande inspiré de l'univers de Pokémon. Le joueur incarne un dresseur qui doit capturer, entraîner et combattre des Supémons pour devenir le meilleur !
 
 ---
 
-## 📖 Sommaire
+# 📖 Sommaire
 
 1. [Installation](#installation)
 2. [Lancement du jeu](#lancement-du-jeu)
@@ -23,7 +18,7 @@ Supémon est un jeu en ligne de commande inspiré de l'univers de Pokémon. Le j
 
 ---
 
-## 🛠 Installation
+# 🛠 Installation
 
 1. Clonez ce dépôt :
    ```sh
