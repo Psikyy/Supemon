@@ -130,7 +130,7 @@ void use_item(Player *player, int item_index) {
     Item *item = &player->items[item_index];
 
     // Gestion des Potions pour augmenter les HP
-    if (strcmp(item->name, "Potion") == 0) {
+    if (strcmp(item->name, "Potion") == 0 || strcmp(item->name, "Super Potion") == 0) {
         if (player->selected_supemon->hp == player->selected_supemon->max_hp) {
             printf("Les HP de %s sont déjà au maximum !\n", player->selected_supemon->name);
             return;
