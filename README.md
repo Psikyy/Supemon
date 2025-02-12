@@ -1,58 +1,105 @@
+Bien sûr ! Voici le contenu amélioré de ton **README.md** en Markdown :  
+
+---
+
+```markdown
 # Supémon - CLI Game
 
 Supémon est un jeu en ligne de commande inspiré de l'univers de Pokémon. Le joueur incarne un dresseur qui doit capturer, entraîner et combattre des Supémons pour devenir le meilleur !
 
 ---
 
-## Documentation Utilisateur
+## 📖 Sommaire
 
-### Installation
+1. [Installation](#installation)
+2. [Lancement du jeu](#lancement-du-jeu)
+3. [Actions disponibles](#actions-disponibles)
+4. [Système de combat](#système-de-combat)
+5. [Système de sauvegarde](#système-de-sauvegarde)
+6. [Documentation technique](#documentation-technique)
+7. [Commandes utiles](#commandes-utiles)
+8. [Prochaines fonctionnalités](#prochaines-fonctionnalités)
+9. [Auteurs](#auteurs)
+
+---
+
+## 🛠 Installation
+
 1. Clonez ce dépôt :
    ```sh
    git clone https://github.com/Psikyy/Supemon
    ```
-2. La commande de compilation :
-    ```sh
-    gcc -o supemon supémon.c adventure/choice/choice.c adventure/center/center.c adventure/shop/shop.c adventure/wild/battle.c class/player/player.c class/supemon/supemon.c intro/intro.c -I adventure/choice -I adventure/center -I adventure/shop -I adventure/wild -I class/player -I class/supemon -I intro -lm
-    ```
-    Explication :
-    - `gcc` : Utilise le compilateur GCC.
-    - `-o supemon` : Génère un exécutable nommé `supemon`.
-    - Liste des fichiers `.c` : Code source du projet.
-    - `-I` : Spécifie les dossiers contenant les fichiers `.h`.
-    - `-lm` : Lie la bibliothèque mathématique (`math.h`).
+2. Compilez le jeu :
+   ```sh
+   gcc -o supemon supémon.c adventure/choice/choice.c adventure/center/center.c adventure/shop/shop.c adventure/wild/battle.c class/player/player.c class/supemon/supemon.c intro/intro.c save/save.c -I save -I adventure/choice -I adventure/center -I adventure/shop -I adventure/wild -I class/player -I class/supemon -I intro -lm
+   ```
+   🔍 **Explication** :
+   - `gcc` : Utilise le compilateur GCC.
+   - `-o supemon` : Génère un exécutable nommé `supemon`.
+   - Liste des fichiers `.c` : Code source du projet.
+   - `-I` : Spécifie les dossiers contenant les fichiers `.h`.
+   - `-lm` : Lie la bibliothèque mathématique (`math.h`).
+
 3. Exécutez le jeu :
    ```sh
    ./supemon
    ```
 
-### Lancement du jeu
+---
+
+## 🎮 Lancement du jeu
+
 - Au démarrage, le joueur entre son nom et choisit un Supémon de départ.
-
-### Actions disponibles
-- **Explorer** : affronte un Supémon sauvage.
-- **Boutique** : achète ou vend des objets.
-- **Centre Supémon** : soigne tous les Supémons gratuitement.
-- **Inventaire** : affiche et utilise des objets.
-- **Quitter** : avec ou sans sauvegarde.
-
-### Combat
-- Système au tour par tour.
-- Choix d'action : attaquer, changer de Supémon, utiliser un objet, fuir ou capturer un ennemi.
-- Un combat se termine lorsqu'un Supémon atteint 0 HP.
-- Récompenses en cas de victoire : Supcoins et expérience.
+- Il peut aussi charger une partie sauvegardée.
 
 ---
 
-## Documentation Technique
+## 🏆 Actions disponibles
 
-### Structure des fichiers
-- **main.c** : Point d'entrée du jeu, gère la boucle principale.
-- **functions.c/.h** : Fonctions utilitaires et logiques du jeu.
-- **player.c/.h** : Gestion du joueur, inventaire et Supémons.
-- **combat.c/.h** : Mécaniques de combat.
+- **Explorer** : Affronte un Supémon sauvage.
+- **Boutique** : Achète ou vend des objets.
+- **Centre Supémon** : Soigne tous les Supémons gratuitement.
+- **Inventaire** : Affiche et utilise des objets.
+- **Quitter** : Avec ou sans sauvegarde.
 
-### Structures principales
+---
+
+## ⚔️ Système de combat
+
+- **Tour par tour** : L'ordre est basé sur la vitesse du Supémon (aléatoire en cas d'égalité).
+- **Actions possibles** :
+  - **Attaquer** : Choisir une attaque.
+  - **Changer de Supémon** : Perd son tour.
+  - **Utiliser un objet** : Limité à 4 par combat.
+  - **Fuir** : Chance basée sur la vitesse.
+  - **Capturer** : Chance basée sur les HP restants.
+- **Fin du combat** : Lorsqu'un Supémon atteint 0 HP.
+- **Récompenses** : Supcoins et expérience.
+
+---
+
+## 💾 Système de sauvegarde
+
+Le jeu enregistre automatiquement :
+- Le nom du joueur.
+- Ses Supémons et leurs statistiques.
+- Son inventaire et ses Supcoins.
+
+📌 **Fichier de sauvegarde** : `save/supemon_save.dat`  
+📤 **Sauvegarde manuelle** : Disponible en quittant le jeu.
+
+---
+
+## 📝 Documentation technique
+
+### 📂 Structure des fichiers
+- **`main.c`** : Point d'entrée du jeu.
+- **`functions.c/.h`** : Fonctions utilitaires et logiques du jeu.
+- **`player.c/.h`** : Gestion du joueur, inventaire et Supémons.
+- **`combat.c/.h`** : Mécaniques de combat.
+
+### 🏅 Structures principales
+
 #### Joueur
 ```c
 typedef struct {
@@ -78,7 +125,7 @@ typedef struct {
 } Supemon;
 ```
 
-### Mécanique de Combat
+### ⚡ Mécanique de Combat
 - **Initiative** : Le Supémon avec la plus haute vitesse commence.
 - **Attaques** : Calcul des dégâts :
   ```c
@@ -92,17 +139,29 @@ typedef struct {
 
 ---
 
-## À venir
-- Ajout de nouveaux Supémons.
-- Plus d'objets et de mécaniques avancées.
-- Possiblité de charger une partie.
-- Ajout de combats d'arêne.
+## 📌 Commandes utiles
+
+📦 **Recompiler le jeu**  
+```sh
+gcc -o supemon supémon.c adventure/choice/choice.c adventure/center/center.c adventure/shop/shop.c adventure/wild/battle.c class/player/player.c class/supemon/supemon.c intro/intro.c save/save.c -I save -I adventure/choice -I adventure/center -I adventure/shop -I adventure/wild -I class/player -I class/supemon -I intro -lm
+```
+
 
 ---
 
-## Auteurs
-- Arthur - [GitHub](https://github.com/Psikyy)
-- Tom - [GitHub](https://github.com/Taumehh)
+## 🚀 Prochaines fonctionnalités
 
-Amusez-vous bien dans Supémon ! 🎮🔥
+🔜 Fonctionnalités en cours de développement :
+- 🆕 Ajout de nouveaux Supémons et objets.
+- 🏆 Combats d'arène avec champions.
+- 📂 Amélioration du système de sauvegarde.
+- 🎭 Mode multijoueur local (coop vs CPU).
 
+---
+
+## 👥 Auteurs
+
+- **Arthur** - [GitHub](https://github.com/Psikyy)
+- **Tom** - [GitHub](https://github.com/Taumehh)
+
+Amusez-vous bien dans **Supémon** ! 🎮🔥  
