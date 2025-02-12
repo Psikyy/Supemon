@@ -58,6 +58,8 @@ void apply_level_up(Supemon *s) {
     s->evasion = random_round(s->evasion * increase_factor);
     s->base_evasion = s->evasion;
     s->speed = random_round(s->speed * increase_factor);
+
+    system("clear");
     
     printf("\n╔═══════════════════════════════════════╗\n");
     printf("║         ÉVOLUTION DES STATS           ║\n");
@@ -76,6 +78,8 @@ void apply_level_up(Supemon *s) {
 void check_level_up(Supemon *s) {
     while (1) {
         int exp_needed = get_exp_for_level(s->level + 1);
+
+        system("clear");
         
         printf("\n╔════════════════════════════════════╗\n");
         printf("║           STATUT NIVEAU            ║\n");

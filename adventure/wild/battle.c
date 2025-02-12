@@ -2,35 +2,110 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 #include "../../class/supemon/supemon.h"
 #include "../../class/player/player.h"
 #include <unistd.h>
 #include "../../adventure/shop/shop.h"
 
-Supemon get_random_wild_supemon() {
+Supemon get_random_wild_supemon(Player *player) {
     Supemon wild_supemons[3];
+    
+    // Get player's Supemon level to adjust wild Supemon level
+    int player_level = player->selected_supemon->level;
+    
+    // Add some randomness to the wild Supemon's level (±2 levels from player's level)
+    int level_variation = (rand() % 5) - 2;  // Random number between -2 and +2
+    int wild_level = player_level + level_variation;
+    
+    // Ensure level doesn't go below 1
+    if (wild_level < 1) {
+        wild_level = 1;
+    }
 
     // Supmander
-    initialize_supemon(&wild_supemons[0], "Supmander", 10, 1, 1, 1, 2, 1, (Move[]) {
-        {"Scratch", 3, 0},
+    Move supmander_moves[MAX_MOVES] = {
+        {"Scratch", 3 + (wild_level - 1), 0},
         {"Growl", 0, 1}
-    });
+    };
+    initialize_supemon(&wild_supemons[0], "Supmander", 
+                      10,  // base HP
+                      1,   // base attack
+                      1,   // base defense
+                      2,   // base evasion
+                      1,   // base accuracy
+                      1,   // base speed
+                      supmander_moves);
 
     // Supasaur
-    initialize_supemon(&wild_supemons[1], "Supasaur", 9, 1, 1, 3, 2, 2, (Move[]) {
-        {"Vine Whip", 3, 0},
+    Move supasaur_moves[MAX_MOVES] = {
+        {"Vine Whip", 3 + (wild_level - 1), 0},
         {"Leer", 0, 1}
-    });
+    };
+    initialize_supemon(&wild_supemons[1], "Supasaur", 
+                      9,   // base HP
+                      1,   // base attack
+                      3,   // base defense
+                      2,   // base evasion
+                      2,   // base accuracy
+                      2,   // base speed
+                      supasaur_moves);
 
     // Supirtle
-    initialize_supemon(&wild_supemons[2], "Supirtle", 11, 1, 2, 2, 1, 2, (Move[]) {
-        {"Water Gun", 3, 0},
+    Move supirtle_moves[MAX_MOVES] = {
+        {"Water Gun", 3 + (wild_level - 1), 0},
         {"Tail Whip", 0, 1}
-    });
+    };
+    initialize_supemon(&wild_supemons[2], "Supirtle", 
+                      11,  // base HP
+                      2,   // base attack
+                      2,   // base defense
+                      1,   // base evasion
+                      2,   // base accuracy
+                      2,   // base speed
+                      supirtle_moves);
 
+    // Sélectionner un Supémon aléatoire
     int random_index = rand() % 3;
-    printf("Created wild Supemon: %s with HP: %d\n", wild_supemons[random_index].name, wild_supemons[random_index].hp);
-    return wild_supemons[random_index];
+    Supemon selected_supemon = wild_supemons[random_index];
+    
+    // Sauvegarder les stats de base
+    int base_hp = selected_supemon.hp;
+    int base_attack = selected_supemon.attack;
+    int base_defense = selected_supemon.defense;
+    int base_evasion = selected_supemon.evasion;
+    int base_accuracy = selected_supemon.accuracy;
+    int base_speed = selected_supemon.speed;
+    
+    // Ajuster le niveau et l'expérience
+    selected_supemon.level = wild_level;
+    selected_supemon.experience = get_exp_for_level(wild_level);
+    
+    // Calculer les nouvelles stats basées sur le niveau
+    selected_supemon.max_hp = base_hp + ((wild_level - 1) * 2);
+    selected_supemon.hp = selected_supemon.max_hp;
+    selected_supemon.base_attack = base_attack;
+    selected_supemon.base_defense = base_defense;
+    selected_supemon.base_evasion = base_evasion;
+    selected_supemon.base_accuracy = base_accuracy;
+    
+    // Appliquer les bonus de niveau aux stats actuelles
+    selected_supemon.attack = base_attack + ((wild_level - 1) / 3);
+    selected_supemon.defense = base_defense + ((wild_level - 1) / 3);
+    selected_supemon.evasion = base_evasion + ((wild_level - 1) / 4);
+    selected_supemon.accuracy = base_accuracy + ((wild_level - 1) / 4);
+    selected_supemon.speed = base_speed + ((wild_level - 1) / 3);
+    
+    // Affichage des informations pour debug
+    printf("Created wild %s (Level %d):\n", selected_supemon.name, selected_supemon.level);
+    printf("HP: %d/%d\n", selected_supemon.hp, selected_supemon.max_hp);
+    printf("Attack: %d (Base: %d)\n", selected_supemon.attack, selected_supemon.base_attack);
+    printf("Defense: %d (Base: %d)\n", selected_supemon.defense, selected_supemon.base_defense);
+    printf("Evasion: %d (Base: %d)\n", selected_supemon.evasion, selected_supemon.base_evasion);
+    printf("Accuracy: %d (Base: %d)\n", selected_supemon.accuracy, selected_supemon.base_accuracy);
+    printf("Speed: %d\n", selected_supemon.speed);
+    
+    return selected_supemon;
 }
 
 void perform_attack(Supemon *attacker, Supemon *defender, int move_index) {
@@ -40,32 +115,64 @@ void perform_attack(Supemon *attacker, Supemon *defender, int move_index) {
     }
 
     Move move = attacker->moves[move_index];
-    int damage = 0;
-
-    // Attaques offensives
+    
+    // Offensive moves
     if (move.damage > 0) {
-        damage = move.damage + attacker->attack - defender->defense;
-        if (damage < 1) damage = 1;  // Minimum 1 dégât
-        defender->hp -= damage;
-        printf("%s used %s!\n", attacker->name, move.name);
-        printf("It dealt %d damage to %s!\n", damage, defender->name);
-    }
-    // Attaques de statut
-    else if (move.stat_boost > 0) {
-        // Pour Growl, Tail Whip et Leer
-        if (strcmp(move.name, "Growl") == 0 || strcmp(move.name, "Tail Whip") == 0 || strcmp(move.name, "Leer") == 0) {
+        // Calculate hit chance
+        double hit_chance = (double)attacker->accuracy / 
+                          (attacker->accuracy + defender->evasion) + 0.1;
+        
+        // Generate random number between 0 and 1
+        double random_hit = (double)rand() / RAND_MAX;
+        
+        // Check if attack hits
+        if (random_hit <= hit_chance) {
+            // Calculate damage
+            double raw_damage = ((double)attacker->attack * move.damage) / defender->defense;
+            
+            // 50% chance to round up or down for non-integer damage
+            int final_damage;
+            if (raw_damage != (int)raw_damage) {  // If damage has decimal part
+                if (rand() % 2 == 0) {
+                    final_damage = (int)ceil(raw_damage);  // Round up
+                } else {
+                    final_damage = (int)floor(raw_damage); // Round down
+                }
+            } else {
+                final_damage = (int)raw_damage;
+            }
+            
+            // Ensure minimum damage of 1
+            if (final_damage < 1) final_damage = 1;
+            
+            // Apply damage
+            defender->hp -= final_damage;
             printf("%s used %s!\n", attacker->name, move.name);
+            printf("It dealt %d damage to %s!\n", final_damage, defender->name);
+        } else {
+            printf("%s used %s!\n", attacker->name, move.name);
+            printf("But it missed!\n");
+        }
+    }
+    // Status moves
+    else if (move.stat_boost > 0) {
+        printf("%s used %s!\n", attacker->name, move.name);
+        
+        // Defense lowering moves
+        if (strcmp(move.name, "Growl") == 0 || 
+            strcmp(move.name, "Tail Whip") == 0 || 
+            strcmp(move.name, "Leer") == 0) {
             if (defender->defense > 0) {
                 defender->defense -= 1;
-                printf("%s's defense decreased to %d!\n", defender->name, defender->defense);
+                printf("%s's defense decreased!\n", defender->name);
             } else {
                 printf("%s's defense can't go any lower!\n", defender->name);
             }
         }
+        // Evasion increasing moves
         else if (strcmp(move.name, "Foliage") == 0) {
-            printf("%s used %s!\n", attacker->name, move.name);
-            printf("%s's evasion increased!\n", attacker->name);
             attacker->evasion += 1;
+            printf("%s's evasion increased!\n", attacker->name);
         }
     }
 
@@ -73,7 +180,8 @@ void perform_attack(Supemon *attacker, Supemon *defender, int move_index) {
         printf("%s fainted!\n", defender->name);
         defender->hp = 0;
     }
-    // Pause de 5 secondes après chaque attaque
+    
+    // Pause for 5 seconds after each attack
     sleep(5);
 }
 

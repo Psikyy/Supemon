@@ -38,24 +38,24 @@ void choice(Player *player) {  // Correction : passage du joueur en paramètre
     while (1) {
         printf("+-----------------------------+\n");
         printf("| Where do you want to go?    |\n");
-        printf("|\t1 - Into the wild          |\n");
-        printf("|\t2 - Into the shop          |\n");
-        printf("|\t3 - In the Supémon Center  |\n");
-        printf("|\t4 - Leave the Game         |\n");
+        printf("| 1 - Into the wild           |\n");
+        printf("| 2 - Into the shop           |\n");
+        printf("| 3 - In the Supémon Center   |\n");
+        printf("| 4 - Leave the Game          |\n");
         printf("+-----------------------------+\n");
 
-        print_inventory(player);
+        //print_inventory(player);
 
         printf("1, 2, 3 or 4: ");
-        if (scanf("%d", &choix) != 1) {
-            printf("Erreur : entrée invalide !\n");
-            return;
+        while (scanf("%d", &choix) != 1 || choix < 1 || choix > 4) {
+            printf("Invalid input! Please enter a number between 1 and 4: ");
+            while (getchar() != '\n'); // Vider le buffer d'entrée
         }
 
         switch (choix) {
             case 1:
                 system("clear");
-                Supemon wild_supemon = get_random_wild_supemon();
+                Supemon wild_supemon = get_random_wild_supemon(player);
                 battle(&wild_supemon, player);
                 break;
             case 2:

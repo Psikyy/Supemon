@@ -22,6 +22,6 @@ bool handle_capture(Supemon *enemy_supemon, Player *player);
 bool handle_run_away(Supemon *enemy_supemon, Player *player);
 void calculate_exp_gain(Supemon *winner, Supemon *loser);
 void handle_victory(Player *player, Supemon *enemy_supemon);
-Supemon get_random_wild_supemon();
+Supemon get_random_wild_supemon(Player *Player);
 
 #endif // BATTLE_H
