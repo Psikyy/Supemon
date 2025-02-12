@@ -5,122 +5,138 @@
 #include "shop.h"
 
 ShopItem shop_items[SHOP_MAX_ITEMS] = {
-    {"Potion", 100, 5},         // Soigne 5 HP
-    {"Super Potion", 300, 10},  // Soigne 10 HP
-    {"Rare Candy", 700, 1}      // Augmente le niveau
+    {"Potion", 100, 5},
+    {"Super Potion", 300, 10},
+    {"Rare Candy", 700, 1}
 };
 
-// Fonction pour nettoyer l'écran
-void clear_screen() {
-    #ifdef _WIN32
-        system("cls");  // Pour Windows
-    #endif
-}
-
-// Fonction pour afficher les objets dans le shop
 void display_shop() {
-    clear_screen();  // Nettoyer l'écran à chaque ouverture du shop
-    printf("\n=== SHOP ===\n");
+    system("clear");
+    printf("+------------------------------------------------------------+\n");
+    printf("|                          SHOP                             |\n");
+    printf("+------------------------------------------------------------+\n");
     for (int i = 0; i < SHOP_MAX_ITEMS; i++) {
-        printf("%d - %s (%d Supcoins)\n", i + 1, shop_items[i].name, shop_items[i].price);
+        printf("| %d - %-15s (%3d Supcoins) ", i + 1, shop_items[i].name, shop_items[i].price);
+        if ((i + 1) % 2 == 0 || i == SHOP_MAX_ITEMS - 1) printf("|\n");
     }
-    printf("0 - Quitter le shop\n");
+    printf("| 0 - Retour                                                 |\n");
+    printf("+------------------------------------------------------------+\n");
 }
 
-// Fonction pour acheter un objet
 void buy_item(Player *player) {
     int choice, quantity;
     display_shop();
-
     printf("\nVotre solde: %d Supcoins\n", player->supcoins);
     printf("Choisissez un objet à acheter (0 pour quitter) : ");
     scanf("%d", &choice);
-
+    while (getchar() != '\n');
     if (choice < 1 || choice > SHOP_MAX_ITEMS) {
-        printf("Achat annulé.\n");
+        system("clear");
         return;
     }
-
-    ShopItem selected_item = shop_items[choice - 1];  // Remplacer Item par ShopItem
-    // Demander la quantité
+    
+    ShopItem selected_item = shop_items[choice - 1];
     printf("Combien voulez-vous acheter de %s ? : ", selected_item.name);
     scanf("%d", &quantity);
-
-    if (quantity <= 0) {
-        printf("Quantité invalide.\n");
-        return;
-    }
-
-    // Vérification du budget
+    while (getchar() != '\n');
+    if (quantity <= 0) return;
+    
     int total_price = selected_item.price * quantity;
-    
-    // Vérifier si le joueur a assez de Supcoins
     if (player->supcoins < total_price) {
-        printf("Vous n'avez pas assez de Supcoins pour cet achat.\n");
+        printf("Fonds insuffisants !\n");
         return;
     }
-    
-    // Vérifier si l'inventaire n'est pas plein
     if (player->item_count + quantity > MAX_ITEMS) {
-        printf("Votre inventaire est plein, vous ne pouvez pas acheter plus d'objets.\n");
+        printf("Inventaire plein !\n");
         return;
     }
     
-    // Ajouter l'objet à l'inventaire
     for (int i = 0; i < quantity; i++) {
         strcpy(player->items[player->item_count].name, selected_item.name);
         player->items[player->item_count].effect = selected_item.effect;
         player->item_count++;
     }
-    
-    player->supcoins -= total_price; // Déduire le prix des Supcoins
-    printf("Vous avez acheté %d x %s !\n", quantity, selected_item.name);
-    
-    // Afficher l'inventaire actuel
-    printf("\nInventaire actuel :\n");
-    for (int i = 0; i < player->item_count; i++) {
-        printf("- %s (Effet: %d)\n", player->items[i].name, player->items[i].effect);
-    }
+    player->supcoins -= total_price;
     system("clear");
+    printf("Vous avez acheté %d x %s !\n", quantity, selected_item.name);
 }
 
-// Fonction pour vendre un objet
-void sell_item(Player *player, int item_index) {
-    if (item_index < 0 || item_index >= player->item_count) {
-        printf(":x: Objet invalide !\n");
+void sell_item(Player *player) {
+    system("clear");
+    if (player->item_count == 0) {
+        printf("\nVous n'avez aucun objet à vendre !\n");
         return;
     }
-
-    Item *item = &player->items[item_index];  // Pas de changement ici car 'Item' reste utilisé dans player.h
-    int original_price = 0;
-
-    // Trouver le prix de l'objet en se basant sur le shop
+    printf("\n=== INVENTAIRE ===\n");
+    for (int i = 0; i < player->item_count; i++) {
+        printf("%d - %s\n", i + 1, player->items[i].name);
+    }
+    printf("0 - Retour\n");
+    
+    int choice;
+    printf("Choisissez un objet à vendre : ");
+    scanf("%d", &choice);
+    while (getchar() != '\n');
+    if (choice < 1 || choice > player->item_count) {
+        system("clear");
+        return;
+    }
+    
+    Item *item = &player->items[choice - 1];
+    int selling_price = 0;
     for (int i = 0; i < SHOP_MAX_ITEMS; i++) {
         if (strcmp(shop_items[i].name, item->name) == 0) {
-            original_price = shop_items[i].price;  // On récupère le prix original
+            selling_price = shop_items[i].price / 2;
             break;
         }
     }
-
-    if (original_price == 0) {
-        printf(":warning: Prix inconnu, annulation de la vente.\n");
-        return;
-    }
-
-    int selling_price = original_price / 2;  // Calcul du prix de vente
-
-    printf(":moneybag: Prix original: %d, Prix vente: %d\n", original_price, selling_price); // Debug
-
-    player->supcoins += selling_price;  // Ajoute les Supcoins au joueur
-
-    // Supprime l'objet en décalant les autres
-    for (int i = item_index; i < player->item_count - 1; i++) {
+    
+    player->supcoins += selling_price;
+    for (int i = choice - 1; i < player->item_count - 1; i++) {
         player->items[i] = player->items[i + 1];
     }
     player->item_count--;
-
-    printf(":white_check_mark: Vous avez vendu %s pour %d Supcoins.\n", item->name, selling_price);
     system("clear");
+    printf("Vous avez vendu %s pour %d Supcoins.\n", item->name, selling_price);
+}
+
+void shop_menu(Player *player) {
+    system("clear");
+    int choice;
+    while (1) {
+        printf("\n+-----------------------------+\n");
+        printf("|        SHOP MENU           |\n");
+        printf("+-----------------------------+\n");
+        printf("| 1 - Acheter                |\n");
+        if (player->item_count > 0) {
+            printf("| 2 - Vendre                 |\n");
+        } else {
+            printf("| 2 - Vendre (Indisponible)   |\n");
+        }
+        printf("| 0 - Quitter                |\n");
+        printf("+-----------------------------+\n");
+        printf("Votre choix : ");
+        scanf("%d", &choice);
+        while (getchar() != '\n');
+        
+        switch (choice) {
+            case 1:
+                buy_item(player);
+                break;
+            case 2:
+                if (player->item_count > 0) {
+                    sell_item(player);
+                } else {
+                    printf("Vous n'avez aucun objet à vendre !\n");
+                }
+                break;
+            case 0:
+                system("clear");
+                return;
+            default:
+                printf("Choix invalide !\n");
+        }
+    }
 }
 
 void use_item(Player *player, int item_index) {
@@ -170,5 +186,4 @@ void use_item(Player *player, int item_index) {
     else {
         printf("Cet objet n'a pas d'effet connu.\n");
     }
-    system("clear");
 }

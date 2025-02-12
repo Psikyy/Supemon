@@ -1,11 +1,12 @@
 #include <stdio.h>
+#include <unistd.h>
 #include "center.h"
 #include "../../class/player/player.h"
 
 void display_center_welcome() {
     printf("+---------------------------------------------+\n");
     printf("|    Welcome to the Supémon Center!           |\n");
-    printf("|We'll heal your Supémons to perfect health!  |\n");
+    printf("| We'll heal your Supémons to perfect health! |\n");
     printf("+---------------------------------------------+\n");
 }
 
@@ -13,7 +14,6 @@ void heal_all_supemons(Player *player) {
     for (int i = 0; i < player->supemon_count; i++) {
         // Restaure les HP au maximum
         player->supemons[i].hp = player->supemons[i].max_hp;
-        
         printf("%s has been fully healed!\n", player->supemons[i].name);
     }
 }
@@ -23,9 +23,9 @@ void display_player_supemons(Player *player) {
     printf("+-----------------------------------+\n");
     for (int i = 0; i < player->supemon_count; i++) {
         Supemon *s = &player->supemons[i];
-        printf("|%d. %s (Level %d)\n              |", i + 1, s->name, s->level);
-        printf("|   HP: %d/%d\n                    |", s->hp, s->max_hp);
-        printf("+---------------------------------+\n");
+        printf("| %d. %-12s (Level %d) |\n", i + 1, s->name, s->level);
+        printf("|    HP: %2d/%2d                  |\n", s->hp, s->max_hp);
+        printf("+-----------------------------------+\n");
     }
 }
 
@@ -37,18 +37,24 @@ void run_supemon_center(Player *player) {
     
     printf("\nWould you like to heal all your Supémons? (y/n): ");
     scanf(" %c", &choice);
+    system("clear");
     
     if (choice == 'y' || choice == 'Y') {
         printf("+-------------------------------------------------------+\n");
-        printf("|Okay! Let me take care of your Supémons!               |\n");
-        printf("...\n");
+        printf("| Okay! Let me take care of your Supémons!              |\n");
+        printf("| ...                                                  |\n");
+        sleep(5);
         heal_all_supemons(player);
-        printf("|All your Supémons have been healed to perfect health!  |\n");
-        printf("|We hope to see you again!\n");
+        printf("| All your Supémons have been healed to perfect health! |\n");
+        printf("| We hope to see you again!                             |\n");
         printf("+-------------------------------------------------------+\n");
+        sleep(2);
     } else {
-        printf("|Okay! We hope to see you again!                        |\n");
+        system("clear");
         printf("+-------------------------------------------------------+\n");
+        printf("| Okay! We hope to see you again!                      |\n");
+        printf("+-------------------------------------------------------+\n");
+        sleep(2);
     }
     system("clear");
 }

@@ -25,6 +25,7 @@ int intro(char *nom) {
         printf("Erreur : le starter n'existe pas !");
         return 0;
     }
+    system("clear");
 
     switch (starter) {
         case 1:
@@ -38,5 +39,4 @@ int intro(char *nom) {
             break;
     }
     return starter;
-    system("clear");
 }

@@ -16,8 +16,9 @@ extern ShopItem shop_items[SHOP_MAX_ITEMS];
 
 // Fonctions du Shop
 void display_shop();
+void shop_menu(Player *player);
 void buy_item(Player *player);
-void sell_item(Player *player, int item_index);
+void sell_item(Player *player);
 void use_item(Player *player, int item_index);
 
 #endif

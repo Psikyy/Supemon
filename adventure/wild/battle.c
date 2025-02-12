@@ -53,26 +53,28 @@ void perform_attack(Supemon *attacker, Supemon *defender, int move_index) {
     // Attaques de statut
     else if (move.stat_boost > 0) {
         // Pour Growl, Tail Whip et Leer
-    if (strcmp(move.name, "Growl") == 0 || strcmp(move.name, "Tail Whip") == 0 || strcmp(move.name, "Leer") == 0) {
-        printf("%s used %s!\n", attacker->name, move.name);
-        if (defender->defense > 0) {
-            defender->defense -= 1;
-            printf("%s's defense decreased to %d!\n", defender->name, defender->defense);
-        } else {
-            printf("%s's defense can't go any lower!\n", defender->name);
+        if (strcmp(move.name, "Growl") == 0 || strcmp(move.name, "Tail Whip") == 0 || strcmp(move.name, "Leer") == 0) {
+            printf("%s used %s!\n", attacker->name, move.name);
+            if (defender->defense > 0) {
+                defender->defense -= 1;
+                printf("%s's defense decreased to %d!\n", defender->name, defender->defense);
+            } else {
+                printf("%s's defense can't go any lower!\n", defender->name);
+            }
         }
-    }
         else if (strcmp(move.name, "Foliage") == 0) {
             printf("%s used %s!\n", attacker->name, move.name);
             printf("%s's evasion increased!\n", attacker->name);
             attacker->evasion += 1;
         }
     }
-    
+
     if (defender->hp <= 0) {
         printf("%s fainted!\n", defender->name);
         defender->hp = 0;
     }
+    // Pause de 5 secondes après chaque attaque
+    sleep(5);
 }
 
 void calculate_exp_gain(Supemon *winner, Supemon *loser) {
@@ -123,6 +125,7 @@ void handle_move(Supemon *enemy_supemon, Player *player) {
             second_attacker = enemy_supemon;
             first_move = move_choice - 1;
             second_move = enemy_move;
+            system("clear");
             printf("\n%s est plus rapide et attaque en premier!\n", player->selected_supemon->name);
         }
         else if (enemy_supemon->speed > player->selected_supemon->speed) {
@@ -131,6 +134,7 @@ void handle_move(Supemon *enemy_supemon, Player *player) {
             second_attacker = player->selected_supemon;
             first_move = enemy_move;
             second_move = move_choice - 1;
+            system("clear");
             printf("\n%s est plus rapide et attaque en premier!\n", enemy_supemon->name);
         }
         else {
@@ -140,12 +144,14 @@ void handle_move(Supemon *enemy_supemon, Player *player) {
                 second_attacker = enemy_supemon;
                 first_move = move_choice - 1;
                 second_move = enemy_move;
+                system("clear");
                 printf("\nÉgalité de vitesse! %s attaque en premier!\n", player->selected_supemon->name);
             } else {
                 first_attacker = enemy_supemon;
                 second_attacker = player->selected_supemon;
                 first_move = enemy_move;
                 second_move = move_choice - 1;
+                system("clear");
                 printf("\nÉgalité de vitesse! %s attaque en premier!\n", enemy_supemon->name);
             }
         }
@@ -302,8 +308,7 @@ void battle(Supemon *enemy_supemon, Player *player) {
             case 2:
                 handle_change_supemon(player);
                 break;
-            case 3:
-                // The item index is the choice from the menu (adjusted to 0-based index)
+             case 3:
                 if (player->item_count > 0) {
                     int item_choice;
                     printf("Choose an item to use (1-%d): ", player->item_count);
@@ -317,7 +322,7 @@ void battle(Supemon *enemy_supemon, Player *player) {
                     printf("No items in inventory!\n");
                 }
                 break;
-           case 4:
+            case 4:
                 if (handle_capture(enemy_supemon, player)) {
                     battle_ended = true;  // Si la capture réussit, on arrête le combat
                 }
@@ -331,8 +336,6 @@ void battle(Supemon *enemy_supemon, Player *player) {
                 printf("Invalid choice! Please enter a number between 1 and 5.\n");
                 break;
         }
-        usleep(5000000); // Pause de 2 secondes
-        system("clear");
         
         if (enemy_supemon->hp <= 0) {
             printf("%s fainted!\n", enemy_supemon->name);
@@ -344,5 +347,9 @@ void battle(Supemon *enemy_supemon, Player *player) {
             printf("You lost the battle... No reward this time.\n");
             battle_ended = true;
         }
+        
+        // Pause de 5 secondes après chaque tour avant de nettoyer l'écran
+        sleep(3);
+        system("clear");
     }
 }

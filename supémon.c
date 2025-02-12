@@ -29,11 +29,14 @@ int main() {
         }
     }
 
+    system("clear");
+
     if (choix == '1') {
         // Nouvelle partie
         char nom[50];
         printf("Entrez votre nom: ");
         scanf("%s", nom);
+        system("clear");
 
         // Lancer l'introduction et récupérer le starter choisi
         int starter_choice = intro(nom);
@@ -46,6 +49,7 @@ int main() {
         initialize_player(player, nom, 100000, starter_choice);
         player->selected_supemon = &player->supemons[0];
     }
+    
 
     // Lancer l'aventure
     choice(player);

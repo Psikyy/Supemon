@@ -18,7 +18,7 @@ void check_level_up(Supemon *supemon);
 int display_battle_screen(Supemon *enemy_supemon, Player *player);
 void handle_move(Supemon *enemy_supemon, Player *player);
 void handle_change_supemon(Player *player);
-void handle_capture(Supemon *enemy_supemon, Player *player);
+bool handle_capture(Supemon *enemy_supemon, Player *player);
 bool handle_run_away(Supemon *enemy_supemon, Player *player);
 void calculate_exp_gain(Supemon *winner, Supemon *loser);
 void handle_victory(Player *player, Supemon *enemy_supemon);

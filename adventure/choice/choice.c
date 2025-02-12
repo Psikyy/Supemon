@@ -54,13 +54,16 @@ void choice(Player *player) {  // Correction : passage du joueur en paramètre
 
         switch (choix) {
             case 1:
+                system("clear");
                 Supemon wild_supemon = get_random_wild_supemon();
                 battle(&wild_supemon, player);
                 break;
             case 2:
-                buy_item(player);
+                system("clear");
+                shop_menu(player);
                 break;
             case 3:
+                system("clear");
                 run_supemon_center(player);
                 break;
             case 4:
