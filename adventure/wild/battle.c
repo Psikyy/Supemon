@@ -96,15 +96,6 @@ Supemon get_random_wild_supemon(Player *player) {
     selected_supemon.accuracy = base_accuracy + ((wild_level - 1) / 4);
     selected_supemon.speed = base_speed + ((wild_level - 1) / 3);
     
-    // Affichage des informations pour debug
-    printf("Created wild %s (Level %d):\n", selected_supemon.name, selected_supemon.level);
-    printf("HP: %d/%d\n", selected_supemon.hp, selected_supemon.max_hp);
-    printf("Attack: %d (Base: %d)\n", selected_supemon.attack, selected_supemon.base_attack);
-    printf("Defense: %d (Base: %d)\n", selected_supemon.defense, selected_supemon.base_defense);
-    printf("Evasion: %d (Base: %d)\n", selected_supemon.evasion, selected_supemon.base_evasion);
-    printf("Accuracy: %d (Base: %d)\n", selected_supemon.accuracy, selected_supemon.base_accuracy);
-    printf("Speed: %d\n", selected_supemon.speed);
-    
     return selected_supemon;
 }
 
