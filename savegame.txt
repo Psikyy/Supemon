@@ -1,9 +1,0 @@
-Nom: tom
-Supcoins: 100338
-Nombre de Supémons: 1
-Supémon 1: Supmander
-  - HP: 7
-  - Attack: 1
-  - Defense: 0
-Nombre d'objets: 1
-Objet 1: Potion (Effet: 5, Prix: 0)
