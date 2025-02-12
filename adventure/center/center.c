@@ -50,4 +50,5 @@ void run_supemon_center(Player *player) {
         printf("|Okay! We hope to see you again!                        |\n");
         printf("+-------------------------------------------------------+\n");
     }
+    system("clear");
 }

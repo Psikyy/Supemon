@@ -38,4 +38,5 @@ int intro(char *nom) {
             break;
     }
     return starter;
+    system("clear");
 }

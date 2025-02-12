@@ -71,4 +71,5 @@ void choice(Player *player) {  // Correction : passage du joueur en paramètre
                 break;
         }
     }
+    system("clear");
 }

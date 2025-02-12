@@ -81,6 +81,7 @@ void buy_item(Player *player) {
     for (int i = 0; i < player->item_count; i++) {
         printf("- %s (Effet: %d)\n", player->items[i].name, player->items[i].effect);
     }
+    system("clear");
 }
 
 // Fonction pour vendre un objet
@@ -119,6 +120,7 @@ void sell_item(Player *player, int item_index) {
     player->item_count--;
 
     printf(":white_check_mark: Vous avez vendu %s pour %d Supcoins.\n", item->name, selling_price);
+    system("clear");
 }
 
 void use_item(Player *player, int item_index) {
@@ -168,4 +170,5 @@ void use_item(Player *player, int item_index) {
     else {
         printf("Cet objet n'a pas d'effet connu.\n");
     }
+    system("clear");
 }

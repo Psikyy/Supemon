@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "../../class/supemon/supemon.h"
 #include "../../class/player/player.h"
+#include <unistd.h>
 #include "../../adventure/shop/shop.h"
 
 Supemon get_random_wild_supemon() {
@@ -266,6 +267,7 @@ int display_battle_screen(Supemon *enemy_supemon, Player *player) {
     printf("1, 2, 3, 4 or 5: ");
     scanf("%d", &choix); 
     return choix;
+    system("clear");
 }
 
 void battle(Supemon *enemy_supemon, Player *player) {
@@ -318,6 +320,8 @@ void battle(Supemon *enemy_supemon, Player *player) {
                 printf("Invalid choice! Please enter a number between 1 and 5.\n");
                 break;
         }
+        usleep(5000000); // Pause de 2 secondes
+        system("clear");
         
         if (enemy_supemon->hp <= 0) {
             printf("%s fainted!\n", enemy_supemon->name);
