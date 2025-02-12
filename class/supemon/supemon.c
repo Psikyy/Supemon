@@ -4,65 +4,6 @@
 #include "supemon.h"
 #include "../player/player.h"
 
-
-// void save_game_text(Player *player, const char *filename) {
-//     FILE *file = fopen(filename, "w");
-//     if (file == NULL) {
-//         printf("Erreur lors de l'ouverture du fichier pour sauvegarde.\n");
-//         return;
-//     }
-
-//     // Sauvegarde des infos du joueur
-//     fprintf(file, "%s %d %d\n", player->name, player->supemon_count, player->supcoins);
-
-//     // Sauvegarde des Supémons
-//     for (int i = 0; i < player->supemon_count; i++) {
-//         Supemon *s = &player->supemons[i];
-//         fprintf(file, "%s %d %d %d %d %d %d %d %d %d\n", 
-//                 s->name, s->hp, s->attack, s->defense, s->evasion, 
-//                 s->accuracy, s->speed, s->level, s->experience, s->max_hp);
-
-//         // Sauvegarde des mouvements
-//         for (int j = 0; j < MAX_MOVES; j++) {
-//             fprintf(file, "%s %d %d\n", s->moves[j].name, s->moves[j].damage, s->moves[j].stat_boost);
-//         }
-//     }
-
-//     fclose(file);
-//     printf("Partie sauvegardée avec succès dans %s !\n", filename);
-// }
-
-// /**
-//  * Charge les données du joueur depuis un fichier texte
-//  */
-// void load_game_text(Player *player, const char *filename) {
-//     FILE *file = fopen(filename, "r");
-//     if (file == NULL) {
-//         printf("Aucune sauvegarde trouvée.\n");
-//         return;
-//     }
-
-//     // Chargement des infos du joueur
-//     fscanf(file, "%s %d %d", player->name, &player->supemon_count, &player->supcoins);
-
-//     // Chargement des Supémons
-//     for (int i = 0; i < player->supemon_count; i++) {
-//         Supemon *s = &player->supemons[i];
-//         fscanf(file, "%s %d %d %d %d %d %d %d %d %d", 
-//                s->name, &s->hp, &s->attack, &s->defense, &s->evasion, 
-//                &s->accuracy, &s->speed, &s->level, &s->experience, &s->max_hp);
-
-//         // Chargement des mouvements
-//         for (int j = 0; j < MAX_MOVES; j++) {
-//             fscanf(file, "%s %d %d", s->moves[j].name, &s->moves[j].damage, &s->moves[j].stat_boost);
-//         }
-//     }
-
-//     fclose(file);
-//     printf("Partie chargée avec succès depuis %s !\n", filename);
-// }
-
-
 void initialize_supemon(Supemon *s, const char *name, int hp, int attack, int defense, int evasion, int accuracy, int speed, Move moves[]) {
     strcpy(s->name, name);
     s->level = 1;
