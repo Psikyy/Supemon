@@ -189,16 +189,22 @@ void handle_victory(Player *player, Supemon *enemy_supemon) {
     calculate_exp_gain(player->selected_supemon, enemy_supemon);
 }
 
-void handle_capture(Supemon *enemy_supemon, Player *player) {
+bool handle_capture(Supemon *enemy_supemon, Player *player) {
     double capture_rate = calculate_capture_rate(enemy_supemon->max_hp, enemy_supemon->hp);
     float random = (float)rand() / RAND_MAX;
     
-    if (random < capture_rate) {
+        if (random < capture_rate) {
         add_supemon(player, *enemy_supemon);
         printf("Successfully captured %s!\n", enemy_supemon->name);
-        // Mettre fin au combat
+        return true;  // Indique que le combat doit s'arrêter
     } else {
         printf("Failed to capture %s!\n", enemy_supemon->name);
+
+        // Passer au tour de l'adversaire après un échec
+        int enemy_move = rand() % MAX_MOVES;
+        perform_attack(enemy_supemon, player->selected_supemon, enemy_move);
+        
+        return false; // Le combat continue
     }
 }
 
@@ -264,7 +270,11 @@ int display_battle_screen(Supemon *enemy_supemon, Player *player) {
     printf("+--------------------------------+\n");
     int choix;
     printf("1, 2, 3, 4 or 5: ");
-    scanf("%d", &choix); 
+    while (scanf("%d", &choix) != 1 || choix < 1 || choix > 5) {
+        printf("Invalid input! Please enter a number between 1 and 5: ");
+        while (getchar() != '\n'); // Vider le buffer d'entrée
+    }
+
     return choix;
 }
 
@@ -305,9 +315,10 @@ void battle(Supemon *enemy_supemon, Player *player) {
                     printf("No items in inventory!\n");
                 }
                 break;
-            case 4:
-                handle_capture(enemy_supemon, player);
-                battle_ended = true;
+           case 4:
+                if (handle_capture(enemy_supemon, player)) {
+                    battle_ended = true;  // Si la capture réussit, on arrête le combat
+                }
                 break;
             case 5:
                 if (handle_run_away(enemy_supemon, player)) {
