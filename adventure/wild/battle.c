@@ -98,7 +98,7 @@ double calculate_escape_rate(int player_speed, int enemy_speed) {
 void handle_move(Supemon *enemy_supemon, Player *player) {
     printf("\nAvailable Moves:\n");
 
-    // Displaying the player's Supémon moves
+    // Affichage des mouvements du joueur
     for (int i = 0; i < MAX_MOVES; i++) {
         if (strlen(player->selected_supemon->moves[i].name) > 0) {
             printf("%d - %s\n", i + 1, player->selected_supemon->moves[i].name);
@@ -110,14 +110,53 @@ void handle_move(Supemon *enemy_supemon, Player *player) {
     scanf("%d", &move_choice);
 
     if (move_choice >= 1 && move_choice <= MAX_MOVES) {
-        // Correctly map the move choice to the correct move index (0-based)
-        perform_attack(player->selected_supemon, enemy_supemon, move_choice - 1);
+        int enemy_move = rand() % MAX_MOVES; // Mouvement aléatoire pour l'ennemi
         
-        // If the enemy is still alive, counter-attack
-        if (enemy_supemon->hp > 0) {
-            int enemy_move = rand() % MAX_MOVES; // Random move for enemy
-            perform_attack(enemy_supemon, player->selected_supemon, enemy_move);
+        // Déterminer qui attaque en premier basé sur la vitesse
+        Supemon *first_attacker, *second_attacker;
+        int first_move, second_move;
+        
+        if (player->selected_supemon->speed > enemy_supemon->speed) {
+            // Le joueur est plus rapide
+            first_attacker = player->selected_supemon;
+            second_attacker = enemy_supemon;
+            first_move = move_choice - 1;
+            second_move = enemy_move;
+            printf("\n%s est plus rapide et attaque en premier!\n", player->selected_supemon->name);
         }
+        else if (enemy_supemon->speed > player->selected_supemon->speed) {
+            // L'ennemi est plus rapide
+            first_attacker = enemy_supemon;
+            second_attacker = player->selected_supemon;
+            first_move = enemy_move;
+            second_move = move_choice - 1;
+            printf("\n%s est plus rapide et attaque en premier!\n", enemy_supemon->name);
+        }
+        else {
+            // Même vitesse, choix aléatoire
+            if (rand() % 2 == 0) {
+                first_attacker = player->selected_supemon;
+                second_attacker = enemy_supemon;
+                first_move = move_choice - 1;
+                second_move = enemy_move;
+                printf("\nÉgalité de vitesse! %s attaque en premier!\n", player->selected_supemon->name);
+            } else {
+                first_attacker = enemy_supemon;
+                second_attacker = player->selected_supemon;
+                first_move = enemy_move;
+                second_move = move_choice - 1;
+                printf("\nÉgalité de vitesse! %s attaque en premier!\n", enemy_supemon->name);
+            }
+        }
+        
+        // Exécuter les attaques dans l'ordre
+        perform_attack(first_attacker, second_attacker, first_move);
+        
+        // Vérifier si le second attaquant peut encore attaquer
+        if (second_attacker->hp > 0) {
+            perform_attack(second_attacker, first_attacker, second_move);
+        }
+        
     } else {
         printf("Invalid move choice!\n");
     }
