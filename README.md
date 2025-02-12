@@ -4,20 +4,6 @@ Supémon est un jeu en ligne de commande inspiré de l'univers de Pokémon. Le j
 
 ---
 
-# 📖 Sommaire
-
-1. [Installation](#installation)
-2. [Lancement du jeu](#lancement-du-jeu)
-3. [Actions disponibles](#actions-disponibles)
-4. [Système de combat](#système-de-combat)
-5. [Système de sauvegarde](#système-de-sauvegarde)
-6. [Documentation technique](#documentation-technique)
-7. [Commandes utiles](#commandes-utiles)
-8. [Prochaines fonctionnalités](#prochaines-fonctionnalités)
-9. [Auteurs](#auteurs)
-
----
-
 # 🛠 Installation
 
 1. Clonez ce dépôt :
