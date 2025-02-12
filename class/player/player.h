@@ -32,5 +32,8 @@ void initialize_player(Player *p, const char *name, int supcoins, int starter_ch
 void add_supemon(Player *p, Supemon s);
 
 void free_player(Player *p);
+void save_player(const Player *player, const char *filename);
+void load_player(Player *player, const char *filename);
+
 
 #endif // PLAYER_H
